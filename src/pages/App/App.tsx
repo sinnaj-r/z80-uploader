@@ -1,5 +1,5 @@
-import { ButtonRow } from "./../components/ButtonRow";
-import { FileSelector } from "./../components/FileSelector";
+import { ButtonRow } from "../../components/ButtonRow";
+import { FileSelector } from "../../components/FileSelector";
 import React, { useState } from "react";
 import {
     Row,
@@ -13,6 +13,7 @@ import {
     Layout,
     Typography,
     PageHeader,
+    notification,
 } from "antd";
 import "./App.css";
 import {
@@ -22,7 +23,8 @@ import {
 } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/lib/upload";
 import { UploadFile } from "antd/lib/upload/interface";
-import { FileList } from "../components/FileList";
+import { FileList } from "../../components/FileList";
+import { fileArrayToHex } from "../../helper/fileTransformation";
 
 const data = ["test.dat", "test2.dat"];
 
@@ -32,9 +34,15 @@ const { Title } = Typography;
 
 function App() {
     const [files, setFiles] = useState<UploadFile[]>([]);
+    const [settings, setSettings] = useState({ offset: 0x5000 });
     const onDraggerChange = (info: UploadChangeParam<UploadFile<any>>) => {
         console.log(info.file, info.fileList);
-        setFiles([...files, ...info.fileList]);
+        setFiles([...files, info.file]);
+        notification.success({ message: `Added ${info.file.name}!` });
+    };
+    const removeFile = (uid: string) => {
+        notification.success({ message: `File removed!` });
+        setFiles(files.filter(({ uid: item_uid }) => item_uid !== uid));
     };
     return (
         <Layout className="App">
@@ -52,7 +60,7 @@ function App() {
                     >
                         <Col span={8}>
                             <Title level={3}> Files</Title>
-                            <FileList data={files} />
+                            <FileList data={files} removeFile={removeFile} />
                         </Col>
                         <Col span={1} style={{ height: "50%" }}>
                             <Divider
@@ -64,7 +72,17 @@ function App() {
                             <FileSelector onDraggerChange={onDraggerChange} />
                         </Col>
                     </Row>
-                    <ButtonRow />
+                    <ButtonRow
+                        transmit={() => {}}
+                        showHex={() =>
+                            fileArrayToHex(files, settings.offset).then((res) =>
+                                alert(res.join("\n"))
+                            )
+                        }
+                        copyHex={() => {}}
+                        openSettings={() => {}}
+                        actionsDisabled={files.length < 1}
+                    />
                     <Row
                         justify="space-around"
                         align="middle"

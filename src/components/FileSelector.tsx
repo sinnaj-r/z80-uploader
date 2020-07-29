@@ -1,22 +1,34 @@
 import React from "react";
-import { Row, Col, Divider, Button } from "antd";
+import { Row, Col, Divider, Button, Upload } from "antd";
 import Dragger from "antd/lib/upload/Dragger";
 import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
+import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 
 export const FileSelector = ({ onDraggerChange }: any) => {
+    const uploadProps = {
+        name: "file",
+        multiple: true,
+        customRequest: ({
+            onSuccess,
+            file,
+            onProgress,
+        }: RcCustomRequestOptions) => {
+            onProgress({ percent: 100 }, file);
+            onSuccess({}, file);
+        },
+        onChange: onDraggerChange,
+
+        showUploadList: false,
+    };
     return (
         <>
             <Row justify="center">
                 <Col>
                     <Dragger
-                        name="file"
-                        multiple
-                        onChange={onDraggerChange}
-                        beforeUpload={() => false}
+                        {...uploadProps}
                         style={{
                             padding: "30px",
                         }}
-                        showUploadList={false}
                     >
                         <p className="ant-upload-drag-icon">
                             <InboxOutlined />
@@ -37,9 +49,11 @@ export const FileSelector = ({ onDraggerChange }: any) => {
             </Row>
             <Row justify="center">
                 <Col>
-                    <Button type="primary" icon={<PlusOutlined />} size="large">
-                        Browse
-                    </Button>
+                    <Upload {...uploadProps}>
+                        <Button>
+                            <PlusOutlined /> Browse
+                        </Button>
+                    </Upload>
                 </Col>
             </Row>
         </>
