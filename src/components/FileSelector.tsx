@@ -4,6 +4,8 @@ import Dragger from "antd/lib/upload/Dragger";
 import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 
+// TODO: Add file size restriction
+
 export const FileSelector = ({ onDraggerChange }: any) => {
     const uploadProps = {
         name: "file",

@@ -31,16 +31,22 @@ export const dataToHexString = (
     return string;
 };
 
-export const fileArrayToHex = async (files: UploadFile[], offset: Number) => {
+export type FileHex = {
+    hex: string;
+    name: string;
+};
+
+export const fileArrayToHex = async (files: UploadFile[], offset: string) => {
     console.log(files);
-    const returnArray: string[] = [];
+    const returnArray: FileHex[] = [];
     for (let file of files) {
-        returnArray.push(
-            dataToHexString(
+        returnArray.push({
+            name: file.name,
+            hex: dataToHexString(
                 (await fileToArrayBuffer(file.originFileObj as File)) as any,
-                offset
-            )
-        );
+                parseInt(offset, 16)
+            ),
+        });
     }
     return returnArray;
 };

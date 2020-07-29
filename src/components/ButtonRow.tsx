@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Row, Col, Button, Space } from "antd";
+import { Row, Col, Button, Space, Popconfirm } from "antd";
 import {
     SettingOutlined,
     PlayCircleOutlined,
@@ -24,14 +24,21 @@ export const ButtonRow: FC<{
             }}
         >
             <Col>
-                <Button
-                    type="primary"
-                    icon={<CaretRightOutlined />}
-                    onClick={transmit}
+                <Popconfirm
+                    title="Do you really want to start transmitting?"
+                    onConfirm={transmit}
+                    okText="Yes"
+                    cancelText="No"
                     disabled={actionsDisabled}
                 >
-                    Transmit
-                </Button>
+                    <Button
+                        type="primary"
+                        icon={<CaretRightOutlined />}
+                        disabled={actionsDisabled}
+                    >
+                        Transmit
+                    </Button>
+                </Popconfirm>
             </Col>
             <Col>
                 <Space>

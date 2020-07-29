@@ -25,6 +25,11 @@ import { UploadChangeParam } from "antd/lib/upload";
 import { UploadFile } from "antd/lib/upload/interface";
 import { FileList } from "../../components/FileList";
 import { fileArrayToHex } from "../../helper/fileTransformation";
+import { SettingsModal } from "../SettingsModal/SettingsModal";
+import { useLocalStorage } from "../../helper/useLocalStorage";
+import { initalSettings, SettingsType } from "../../initalSettings";
+import produce from "immer";
+import { hexAction } from "../../helper/createZ80Commands";
 
 const data = ["test.dat", "test2.dat"];
 
@@ -34,7 +39,11 @@ const { Title } = Typography;
 
 function App() {
     const [files, setFiles] = useState<UploadFile[]>([]);
-    const [settings, setSettings] = useState({ offset: 0x5000 });
+    const [settings, setSettings] = useLocalStorage<SettingsType>(
+        "settings",
+        initalSettings
+    );
+    const [settingsVisible, setSettingsVisible] = useState(false);
     const onDraggerChange = (info: UploadChangeParam<UploadFile<any>>) => {
         console.log(info.file, info.fileList);
         setFiles([...files, info.file]);
@@ -44,8 +53,30 @@ function App() {
         notification.success({ message: `File removed!` });
         setFiles(files.filter(({ uid: item_uid }) => item_uid !== uid));
     };
+    const editFileName = (uid: string, name: string) => {
+        const newFiles = produce(files, (draft) => {
+            const changedItem = draft.find(
+                ({ uid: item_uid }) => item_uid === uid
+            );
+            if (!changedItem) {
+                return;
+            }
+            changedItem.name = name;
+        });
+        setFiles(newFiles);
+    };
     return (
         <Layout className="App">
+            <SettingsModal
+                initalValues={settings}
+                visible={settingsVisible}
+                onCancel={() => setSettingsVisible(false)}
+                onCreate={(settings: any) => {
+                    console.log(settings);
+                    setSettingsVisible(false);
+                    setSettings(settings);
+                }}
+            />
             <PageHeader
                 ghost={false}
                 title="z80 Uploader"
@@ -60,7 +91,11 @@ function App() {
                     >
                         <Col span={8}>
                             <Title level={3}> Files</Title>
-                            <FileList data={files} removeFile={removeFile} />
+                            <FileList
+                                data={files}
+                                removeFile={removeFile}
+                                editFileName={editFileName}
+                            />
                         </Col>
                         <Col span={1} style={{ height: "50%" }}>
                             <Divider
@@ -73,14 +108,14 @@ function App() {
                         </Col>
                     </Row>
                     <ButtonRow
-                        transmit={() => {}}
-                        showHex={() =>
-                            fileArrayToHex(files, settings.offset).then((res) =>
-                                alert(res.join("\n"))
-                            )
-                        }
-                        copyHex={() => {}}
-                        openSettings={() => {}}
+                        transmit={() => {
+                            notification.warning({
+                                message: "Not implemented (yet)!",
+                            });
+                        }}
+                        showHex={() => hexAction("SHOW", files, settings)}
+                        copyHex={() => hexAction("COPY", files, settings)}
+                        openSettings={() => setSettingsVisible(true)}
                         actionsDisabled={files.length < 1}
                     />
                     <Row
