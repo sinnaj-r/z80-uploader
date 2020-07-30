@@ -6,9 +6,12 @@
     "build": {
         "appId": "de.jannisrosenbaum.z80uploader"
     },
+    "description": "z80 Uploader - The easy way to transfer programms to your z80",
     "main": "public/electron.js",
     "dependencies": {
         "@ant-design/icons": "^4.2.1",
+        "@serialport/bindings": "^9.0.0",
+        "@serialport/stream": "^9.0.0",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.3.2",
         "@testing-library/user-event": "^7.1.2",
@@ -16,6 +19,7 @@
         "@types/node": "^12.0.0",
         "@types/react": "^16.9.0",
         "@types/react-dom": "^16.9.0",
+        "@types/serialport": "^8.0.1",
         "antd": "^4.5.1",
         "cross-env": "^7.0.2",
         "electron-is-dev": "^1.2.0",
