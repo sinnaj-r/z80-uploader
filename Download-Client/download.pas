@@ -8,6 +8,7 @@ Const
 Type 
   Str2 = string[2];
   Str4 = string[4];
+  Str3 = string[3];
   HexLine = string[45];
   ByteBuffer = array[1 .. BufSize] Of Byte;
 
@@ -19,15 +20,17 @@ Var
   RecsWritten: Integer;
   InitalOffset: Integer;
   BytesWrittenTotal: Integer;
+  PosIndex: Integer;
 
 Function HexToInt (Var St: Str2): Byte;
 
 Var 
+  WorkingStr: Str3;
   Code : Integer;
   i : Integer;
 Begin
-  St := Concat('$',St);
-  Val(St,i,Code);
+  WorkingStr := Concat('$',St);
+  Val(WorkingStr,i,Code);
   HexToInt := i;
   If Code <> 0 Then
     Begin
@@ -62,48 +65,67 @@ Var
   DataEnd: integer;
   Checksum: str2;
   Pos: integer;
-  PosIndex: Integer;
   CurrentDataSt: Str2;
   CurrentData: Byte;
 Begin
   ByteCountSt := Copy(Line, 2,2);
   ByteCount := HexToInt(ByteCountSt);
-  AddressSt := Copy(Line, 3,4);
+  AddressSt := Copy(Line, 4,4);
   Address := DoubleHexToInt(AddressSt);
   HexType := Copy(Line, 8,2);
   DataEnd := 10 + (ByteCount * 2);
 
-  If (HexType = '02') Then InitalOffset := Address;
+  Write('Type: ');
+  Writeln(HexType);
+  Write('Count St: ');
+  Writeln(ByteCountSt);
+  Write('Count: ');
+  Writeln(ByteCount);
+  Write('Addr: ');
+  Writeln(Address);
+  Write('DataEnd: ');
+  Writeln(DataEnd);
 
-  If (HexType = '00') Then ContLoop := False;
+  If (HexType = '01') Then ContLoop := False;
 
-  If (HexType = '10') Then
-    PosIndex := 1;
-  Begin
-    While (Pos <= DataEnd) Do
-      Begin
-        CurrentDataSt := Copy(Line, 10 + Pos, 2);
-        CurrentData := HexToInt(CurrentDataSt);
-        Buffer[PosIndex] := CurrentData;
-        Pos := Pos + 2;
-      End;
-  End;
+  If (HexType = '00') Then
+    Begin
+      writeln('Read Begin: ');
+      Pos := 10;
+      While Pos <= DataEnd Do
+        Begin
+          CurrentDataSt := Copy(Line, Pos, 2);
+          CurrentData := HexToInt(CurrentDataSt);
+          Writeln('Data for: ', Pos, ' at: ', PosIndex, ' cont: ', CurrentData);
+          Buffer[PosIndex] := CurrentData;
+          Pos := Pos + 2;
+          PosIndex := PosIndex + 1;
+        End;
+      writeln(' END');
+    End;
 End;
 
 Begin
   Assign(DataFile, ParamStr(1));
   Rewrite(DataFile);
+  PosIndex := 1;
+  ContLoop := True;
   While ContLoop Do
     Begin
       ReadLn(CurrentLine);
+      WriteLn(CurrentLine);
       ContLoop := CurrentLine <> '';
       If (ContLoop) Then
         Begin
           ParseHex(CurrentLine);
         End;
-      BlockWrite(DataFile, Buffer, RecsWritten);
+      If ((PosIndex Mod 128 = 0) Or Not ContLoop) Then
+        Begin
+          BlockWrite(DataFile, Buffer, 1);
+          PosIndex := 1;
+        End;
     End;
   Close(DataFile);
 
 End.
-
+

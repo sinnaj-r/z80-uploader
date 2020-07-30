@@ -91,7 +91,6 @@ export const SettingsModal: React.FC<{
                     valuePropName="checked"
                     name="copyCommands"
                     label="Copy Commands when copying hex"
-                    className="collection-create-form_last-form-item"
                 >
                     <Switch
                         checkedChildren={<CheckOutlined />}
@@ -101,7 +100,6 @@ export const SettingsModal: React.FC<{
                 <Form.Item
                     name="showCommands"
                     label="Show Commands when viewing hex"
-                    className="collection-create-form_last-form-item"
                     valuePropName="checked"
                 >
                     <Switch

@@ -1,6 +1,5 @@
 import { UploadFile } from "antd/lib/upload/interface";
-import MemoryMap from "nrf-intel-hex";
-import { off } from "process";
+import MemoryMap from "../intel-hex/intel-hex";
 
 export const fileToArrayBuffer = (file: File) => {
     return new Promise(function (resolve, reject) {
