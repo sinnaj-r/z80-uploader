@@ -63,46 +63,49 @@ Var
   Address: integer;
   HexType: Str2;
   DataEnd: integer;
-  Checksum: str2;
+  ChecksumStr: str2;
+  Checksum: integer;
   Pos: integer;
   CurrentDataSt: Str2;
   CurrentData: Byte;
+  CurrentSum: integer;
 Begin
   ByteCountSt := Copy(Line, 2,2);
   ByteCount := HexToInt(ByteCountSt);
   AddressSt := Copy(Line, 4,4);
   Address := DoubleHexToInt(AddressSt);
   HexType := Copy(Line, 8,2);
-  DataEnd := 10 + (ByteCount * 2);
+  DataEnd := 10 + (ByteCount * 2) - 2;
+  ChecksumStr := Copy(Line, DataEnd + 2, 2);
+  Checksum := HexToInt(ChecksumStr);
 
-  Write('Type: ');
-  Writeln(HexType);
-  Write('Count St: ');
-  Writeln(ByteCountSt);
-  Write('Count: ');
-  Writeln(ByteCount);
-  Write('Addr: ');
-  Writeln(Address);
-  Write('DataEnd: ');
-  Writeln(DataEnd);
+  CurrentSum := ByteCount;
+  CurrentSum := CurrentSum + (Address - ((Address shr 8) shl 8));
+  CurrentSum := CurrentSum + (Address shr 8);
+  CurrentSum := CurrentSum + HexToInt(HexType);
+  CurrentSum := CurrentSum + Checksum;
+
 
   If (HexType = '01') Then ContLoop := False;
 
   If (HexType = '00') Then
     Begin
-      writeln('Read Begin: ');
       Pos := 10;
       While Pos <= DataEnd Do
         Begin
           CurrentDataSt := Copy(Line, Pos, 2);
           CurrentData := HexToInt(CurrentDataSt);
-          Writeln('Data for: ', Pos, ' at: ', PosIndex, ' cont: ', CurrentData);
+          CurrentSum := CurrentSum + CurrentData;
           Buffer[PosIndex] := CurrentData;
           Pos := Pos + 2;
           PosIndex := PosIndex + 1;
         End;
-      writeln(' END');
     End;
+  If ((CurrentSum And 255) = 0) Then
+    write('.')
+  Else
+    writeln('x');
+
 End;
 
 Begin
@@ -113,13 +116,12 @@ Begin
   While ContLoop Do
     Begin
       ReadLn(CurrentLine);
-      WriteLn(CurrentLine);
       ContLoop := CurrentLine <> '';
       If (ContLoop) Then
         Begin
           ParseHex(CurrentLine);
         End;
-      If ((PosIndex Mod 128 = 0) Or Not ContLoop) Then
+      If ((PosIndex Div 128 >= 1) Or Not ContLoop) Then
         Begin
           BlockWrite(DataFile, Buffer, 1);
           PosIndex := 1;
@@ -128,4 +130,4 @@ Begin
   Close(DataFile);
 
 End.
-
+

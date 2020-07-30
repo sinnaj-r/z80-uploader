@@ -118,7 +118,9 @@ class MemoryMap {
      *
      * let string = memMap.asHexString();
      */
-    asHexString(lineSize = 5) {
+
+    //TODO In Settings einstellbar machen
+    asHexString(lineSize = 16) {
         let highAddress = -1 << 16; // 16 most significant bits of the current addr
         const records = [];
         if (lineSize <= 0) {

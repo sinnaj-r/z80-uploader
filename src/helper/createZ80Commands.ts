@@ -21,6 +21,7 @@ export const createZ80Commands = async (
             resultString += `DOWNLOAD ${fileHex.name.toUpperCase()}\n`;
         }
         resultString += fileHex.hex;
+        resultString += "\n";
     }
     return resultString;
 };
