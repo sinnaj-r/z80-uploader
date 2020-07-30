@@ -1,104 +1,109 @@
-program Download;
 
-const
-   RecSize = 128;
-   BufSize = 25600;
+Program Download;
 
-type
-   Str2 = string[2];
-   Str4 = string[4];
-   HexLine = string[45];
-   ByteBuffer = array[1 .. BufSize] of Byte;
+Const 
+  RecSize = 128;
+  BufSize = 25600;
 
-var
-   ContLoop: boolean;
-   DataFile: file;
-   CurrentLine: HexLine;
-   Buffer: ByteBuffer;
-   RecsWritten: Integer;
-   InitalOffset: Integer;
-   BytesWrittenTotal: Integer;
+Type 
+  Str2 = string[2];
+  Str4 = string[4];
+  HexLine = string[45];
+  ByteBuffer = array[1 .. BufSize] Of Byte;
 
-function HexToInt (var St: Str2): Byte;
-    var
-       Code : Integer;
-       i : Integer;
-    begin
-         St := Concat('$',St);
-         Val(St,i,Code);
-         HexToInt:=i;
-         IF Code <> 0 then
-         begin
-              HexToInt:=0;
-         end;
-    end;
+Var 
+  ContLoop: boolean;
+  DataFile: file;
+  CurrentLine: HexLine;
+  Buffer: ByteBuffer;
+  RecsWritten: Integer;
+  InitalOffset: Integer;
+  BytesWrittenTotal: Integer;
 
-function DoubleHexToInt (var St: Str4): Integer;
-    var
-       Part1St: Str2;
-       Part2St: Str2;
-       Part1: integer;
-       Part2: integer;
-    begin
-       Part1St := Copy(St, 1,2);
-       Part2St := Copy(St, 3,4);
-       Part1 := HexToInt(Part1St);
-       Part2 := HexToInt(Part2St);
-       DoubleHexToInt := (Part1 shl 8) + Part2;
-    end;
+Function HexToInt (Var St: Str2): Byte;
+
+Var 
+  Code : Integer;
+  i : Integer;
+Begin
+  St := Concat('$',St);
+  Val(St,i,Code);
+  HexToInt := i;
+  If Code <> 0 Then
+    Begin
+      HexToInt := 0;
+    End;
+End;
+
+Function DoubleHexToInt (Var St: Str4): Integer;
+
+Var 
+  Part1St: Str2;
+  Part2St: Str2;
+  Part1: integer;
+  Part2: integer;
+Begin
+  Part1St := Copy(St, 1,2);
+  Part2St := Copy(St, 3,4);
+  Part1 := HexToInt(Part1St);
+  Part2 := HexToInt(Part2St);
+  DoubleHexToInt := (Part1 shl 8) + Part2;
+End;
 
 
-procedure ParseHex (Line: HexLine);
-    var
-       ByteCountSt: Str2;
-       ByteCount: integer;
-       AddressSt: Str4;
-       Address: integer;
-       HexType: Str2;
-       DataEnd: integer;
-       Checksum: str2;
-       Pos: integer;
-       PosIndex: Integer;
-       CurrentDataSt: Str2;
-       CurrentData: Byte;
-    begin
-       ByteCountSt:= Copy(Line, 2,2);
-       ByteCount:= HexToInt(ByteCountSt);
-       AddressSt := Copy(Line, 3,4);
-       Address := DoubleHexToInt(AddressSt);
-       HexType := Copy(Line, 8,2);
-       DataEnd:= 10 + (ByteCount * 2);
+Procedure ParseHex (Line: HexLine);
 
-       if(HexType = '02') then InitalOffset:= Address;
+Var 
+  ByteCountSt: Str2;
+  ByteCount: integer;
+  AddressSt: Str4;
+  Address: integer;
+  HexType: Str2;
+  DataEnd: integer;
+  Checksum: str2;
+  Pos: integer;
+  PosIndex: Integer;
+  CurrentDataSt: Str2;
+  CurrentData: Byte;
+Begin
+  ByteCountSt := Copy(Line, 2,2);
+  ByteCount := HexToInt(ByteCountSt);
+  AddressSt := Copy(Line, 3,4);
+  Address := DoubleHexToInt(AddressSt);
+  HexType := Copy(Line, 8,2);
+  DataEnd := 10 + (ByteCount * 2);
 
-       if(HexType = '00') then ContLoop := False;
+  If (HexType = '02') Then InitalOffset := Address;
 
-       if(HexType = '10') then
-       PosIndex := 1;
-       begin
-           while(Pos <= DataEnd) do
-           begin
-             CurrentDataSt := Copy(Line, 10 + Pos, 2);
-             CurrentData := HexToInt(CurrentDataSt);
-             Buffer[PosIndex] := CurrentData;
-             Pos := Pos + 2;
-         end;
-       end;
-    end;
+  If (HexType = '00') Then ContLoop := False;
 
-begin
+  If (HexType = '10') Then
+    PosIndex := 1;
+  Begin
+    While (Pos <= DataEnd) Do
+      Begin
+        CurrentDataSt := Copy(Line, 10 + Pos, 2);
+        CurrentData := HexToInt(CurrentDataSt);
+        Buffer[PosIndex] := CurrentData;
+        Pos := Pos + 2;
+      End;
+  End;
+End;
+
+Begin
   Assign(DataFile, ParamStr(1));
   Rewrite(DataFile);
-  while ContLoop do
-  begin
+  While ContLoop Do
+    Begin
       ReadLn(CurrentLine);
       ContLoop := CurrentLine <> '';
-      if(ContLoop) then
-      begin
-           ParseHex(CurrentLine);
-      end;
+      If (ContLoop) Then
+        Begin
+          ParseHex(CurrentLine);
+        End;
       BlockWrite(DataFile, Buffer, RecsWritten);
-  end;
+    End;
   Close(DataFile);
 
-end.
+End.
+
