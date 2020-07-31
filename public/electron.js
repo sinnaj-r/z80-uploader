@@ -4,6 +4,7 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const isDev = require("electron-is-dev");
 let mainWindow;
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 900,
@@ -17,6 +18,7 @@ function createWindow() {
     );
     mainWindow.on("closed", () => (mainWindow = null));
 }
+
 app.allowRendererProcessReuse = false;
 app.on("ready", createWindow);
 app.on("window-all-closed", () => {

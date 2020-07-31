@@ -9,7 +9,6 @@ SerialPort.Binding = Bindings;
 export { SerialPort };
 //@ts-ignore
 //Bindings.createPort("/dev/ROBOT", { echo: false, record: true });
-console.log("bindings", Bindings);
 
 export const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -39,7 +38,6 @@ export const transmitCommands = async (
         autoOpen: false,
         lock: false,
     });
-    console.log("port", port);
 
     const open = promisify(port.open.bind(port));
     const drain = promisify(port.drain.bind(port));
@@ -56,7 +54,6 @@ export const transmitCommands = async (
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         let errors = progress.errors;
-        //
         console.log("-----\n" + line);
 
         await flush();

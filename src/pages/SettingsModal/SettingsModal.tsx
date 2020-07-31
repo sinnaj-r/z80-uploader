@@ -28,13 +28,9 @@ export const SettingsModal: React.FC<{
             }}
             maskClosable={false}
             onOk={() => {
-                form.validateFields()
-                    .then((values) => {
-                        onCreate(values);
-                    })
-                    .catch((info) => {
-                        console.log("Validate Failed:", info);
-                    });
+                form.validateFields().then((values) => {
+                    onCreate(values);
+                });
             }}
         >
             <Form form={form} layout="vertical" initialValues={initalValues}>

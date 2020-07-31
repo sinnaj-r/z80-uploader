@@ -55,7 +55,6 @@ function App() {
     const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
     const onDraggerChange = (info: UploadChangeParam<UploadFile<any>>) => {
-        console.log(info.file, info.fileList);
         setFiles([...files, info.file]);
         notification.success({ message: `Added ${info.file.name}!` });
     };
@@ -81,6 +80,7 @@ function App() {
     );
     const onTransmit = () => {
         setErrorMessage(null);
+        setProgress(initalProgress(0));
         hexAction(
             "TRANSMIT",
             files,
@@ -105,7 +105,6 @@ function App() {
                 visible={settingsVisible}
                 onCancel={() => setSettingsVisible(false)}
                 onCreate={(settings: any) => {
-                    console.log(settings);
                     setSettingsVisible(false);
                     setSettings(settings);
                 }}

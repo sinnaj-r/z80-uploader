@@ -21,7 +21,6 @@ export const dataToHexString = (
     arrayBuffer: ArrayBuffer,
     offset: Number
 ): string => {
-    console.log(arrayBuffer);
     let memMap = new MemoryMap();
     let bytes = new Uint8Array(arrayBuffer);
     memMap.set(offset, bytes);
@@ -36,7 +35,6 @@ export type FileHex = {
 };
 
 export const fileArrayToHex = async (files: UploadFile[], offset: string) => {
-    console.log(files);
     const returnArray: FileHex[] = [];
     for (let file of files) {
         returnArray.push({

@@ -1,11 +1,17 @@
 {
     "name": "z80uploader",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "private": true,
     "author": "@sinnaj-r",
     "build": {
-        "appId": "de.jannisrosenbaum.z80uploader"
+        "appId": "de.jannisrosenbaum.z80uploader",
+        "productName": "z80 Uploader",
+        "directories": {
+            "buildResources": "build",
+            "output": "dist"
+        }
     },
+    "homepage": ".",
     "description": "z80 Uploader - The easy way to transfer programms to your z80",
     "main": "public/electron.js",
     "dependencies": {

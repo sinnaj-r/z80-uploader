@@ -12,7 +12,6 @@ export const createZ80Commands = async (
     action: "SHOW" | "COPY" | "TRANSMIT"
 ) => {
     const fileHexes = await fileArrayToHex(files, settings.byteOffset);
-    console.log(fileHexes);
     let resultString = "";
     for (let fileHex of fileHexes) {
         if (
@@ -37,7 +36,6 @@ export const hexAction = async (
     onProgress?: (progress: ProgressType) => void
 ) => {
     const hexString = await createZ80Commands(files, settings, action);
-    console.log(hexString);
 
     if (action === "COPY") {
         clipboard.writeText(hexString);

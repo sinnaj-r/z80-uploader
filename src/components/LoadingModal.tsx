@@ -12,13 +12,15 @@ export const LoadingModal = (props: Props) => {
     const percent = Math.ceil(
         (props.progress.finished / props.progress.total) * 100
     );
+    const finished = !!props.errorMessage || props.progress.completed;
+
     return (
         <Modal
             title="Transmit in Progress"
             visible={props.visible}
-            closable={!!props.errorMessage || props.progress.completed}
-            confirmLoading={!props.errorMessage && !props.progress.completed}
-            maskClosable={!!props.errorMessage || props.progress.completed}
+            closable={finished}
+            confirmLoading={!finished}
+            maskClosable={finished}
             onOk={props.onClose}
             cancelButtonProps={{ disabled: true }}
         >
@@ -31,7 +33,10 @@ export const LoadingModal = (props: Props) => {
             ) : (
                 <Row gutter={16} justify="space-between" align="middle">
                     <Col span={17}>
-                        <Progress percent={percent} status="active" />
+                        <Progress
+                            percent={percent}
+                            status={finished ? "success" : "active"}
+                        />
                     </Col>
                     <Col offset={1} span={6}>
                         <Statistic
