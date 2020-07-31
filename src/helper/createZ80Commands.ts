@@ -20,10 +20,12 @@ export const createZ80Commands = async (
             (action === "SHOW" && settings.showCommands) ||
             (action === "TRANSMIT" && settings.transmitCommands)
         ) {
-            resultString += `DOWNLOAD ${fileHex.name.toUpperCase()}\n`;
+            resultString += `${
+                settings.downloadExecName
+            } ${fileHex.name.toUpperCase()}\r\n`;
         }
         resultString += fileHex.hex;
-        resultString += "\n";
+        resultString += "\r\n";
     }
     return resultString;
 };

@@ -51,22 +51,25 @@ export const transmitCommands = async (
     const lines = hexString.split("\n");
     let progress: ProgressType = initalProgress(lines.length);
     await open();
+    port.write("\r\n", "ascii");
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         let errors = progress.errors;
         //
         console.log("-----\n" + line);
-        await flush();
 
+        await flush();
+        if (line[0] !== ":") {
+            await sleep(1000);
+        }
         for (let char of line) {
             port.write(char, "ascii");
             await drain();
         }
 
-        port.write("\r\n", "ascii");
         await drain();
-        await sleep(50);
+        await sleep(line[0] !== ":" ? 500 : 50);
         const result = port.read()?.toString();
         console.log(result);
 
@@ -80,12 +83,14 @@ export const transmitCommands = async (
             }
         }
         if (maxRetries <= 0) {
-            break;
+            throw new Error("Too Many transmission Errors!");
         }
 
         progress = { ...progress, finished: i + 1, errors };
         onProgress(progress);
     }
+    port.write("\r\n", "ascii");
+    flush();
     port.close();
     progress = { ...progress, completed: true };
     onProgress(progress);

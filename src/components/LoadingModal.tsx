@@ -37,6 +37,7 @@ export const LoadingModal = (props: Props) => {
                         <Statistic
                             title="Failures"
                             value={props.progress.errors}
+                            suffix="corrected"
                         />
                     </Col>
                 </Row>

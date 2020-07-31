@@ -203,7 +203,7 @@ class MemoryMap {
 
         records.push(":00000001FF"); // EOF record
 
-        return records.join("\n");
+        return records.join("\r\n");
     }
 }
 
