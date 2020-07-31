@@ -1,6 +1,6 @@
 import { ButtonRow } from "../../components/ButtonRow";
 import { FileSelector } from "../../components/FileSelector";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
     Row,
     Col,
@@ -30,6 +30,9 @@ import { useLocalStorage } from "../../helper/useLocalStorage";
 import { initalSettings, SettingsType } from "../../initalSettings";
 import produce from "immer";
 import { hexAction } from "../../helper/createZ80Commands";
+import { ProgressType, initalProgress } from "../../helper/serialConnection";
+import { LoadingModal } from "../../components/LoadingModal";
+import { debounce, throttle } from "lodash";
 
 const data = ["test.dat", "test2.dat"];
 
@@ -44,6 +47,11 @@ function App() {
         initalSettings
     );
     const [settingsVisible, setSettingsVisible] = useState(false);
+    const [progressState, setProgress] = useState<ProgressType>(
+        initalProgress(0)
+    );
+    const [loadingModalVisible, setLoadingModalVisible] = useState(false);
+
     const onDraggerChange = (info: UploadChangeParam<UploadFile<any>>) => {
         console.log(info.file, info.fileList);
         setFiles([...files, info.file]);
@@ -65,6 +73,10 @@ function App() {
         });
         setFiles(newFiles);
     };
+
+    const onTransmitProgress = useRef(
+        throttle((progress: ProgressType) => setProgress(progress), 50)
+    );
     return (
         <Layout className="App">
             <SettingsModal
@@ -76,6 +88,11 @@ function App() {
                     setSettingsVisible(false);
                     setSettings(settings);
                 }}
+            />
+            <LoadingModal
+                onClose={() => setLoadingModalVisible(false)}
+                progress={progressState}
+                visible={loadingModalVisible}
             />
             <PageHeader
                 ghost={false}
@@ -109,9 +126,13 @@ function App() {
                     </Row>
                     <ButtonRow
                         transmit={() => {
-                            notification.warning({
-                                message: "Not implemented (yet)!",
-                            });
+                            hexAction(
+                                "TRANSMIT",
+                                files,
+                                settings,
+                                onTransmitProgress.current
+                            );
+                            setLoadingModalVisible(true);
                         }}
                         showHex={() => hexAction("SHOW", files, settings)}
                         copyHex={() => hexAction("COPY", files, settings)}

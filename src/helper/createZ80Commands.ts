@@ -1,3 +1,4 @@
+import { transmitCommands, ProgressType } from "./serialConnection";
 import { SettingsType } from "./../initalSettings";
 import { UploadFile } from "antd/lib/upload/interface";
 import { fileArrayToHex } from "./fileTransformation";
@@ -8,7 +9,7 @@ const { clipboard } = window.require("electron");
 export const createZ80Commands = async (
     files: UploadFile[],
     settings: SettingsType,
-    action: "SHOW" | "COPY"
+    action: "SHOW" | "COPY" | "TRANSMIT"
 ) => {
     const fileHexes = await fileArrayToHex(files, settings.byteOffset);
     console.log(fileHexes);
@@ -16,7 +17,8 @@ export const createZ80Commands = async (
     for (let fileHex of fileHexes) {
         if (
             (action === "COPY" && settings.copyCommands) ||
-            (action === "SHOW" && settings.showCommands)
+            (action === "SHOW" && settings.showCommands) ||
+            (action === "TRANSMIT" && settings.transmitCommands)
         ) {
             resultString += `DOWNLOAD ${fileHex.name.toUpperCase()}\n`;
         }
@@ -27,9 +29,10 @@ export const createZ80Commands = async (
 };
 
 export const hexAction = async (
-    action: "SHOW" | "COPY",
+    action: "SHOW" | "COPY" | "TRANSMIT",
     files: UploadFile[],
-    settings: SettingsType
+    settings: SettingsType,
+    onProgress?: (progress: ProgressType) => void
 ) => {
     const hexString = await createZ80Commands(files, settings, action);
     console.log(hexString);
@@ -39,7 +42,9 @@ export const hexAction = async (
         notification.success({
             message: "The Hex-String was copied successfully!",
         });
-    } else {
+    } else if (action === "SHOW") {
         alert(hexString);
+    } else if (action === "TRANSMIT") {
+        transmitCommands(settings, hexString, onProgress);
     }
 };

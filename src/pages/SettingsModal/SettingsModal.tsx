@@ -107,6 +107,16 @@ export const SettingsModal: React.FC<{
                         unCheckedChildren={<CloseOutlined />}
                     />
                 </Form.Item>
+                <Form.Item
+                    name="transmitCommands"
+                    label="Transmit Commands"
+                    valuePropName="checked"
+                >
+                    <Switch
+                        checkedChildren={<CheckOutlined />}
+                        unCheckedChildren={<CloseOutlined />}
+                    />
+                </Form.Item>
             </Form>
         </Modal>
     );
