@@ -33,6 +33,7 @@ import { hexAction } from "../../helper/createZ80Commands";
 import { ProgressType, initalProgress } from "../../helper/serialConnection";
 import { LoadingModal } from "../../components/LoadingModal";
 import { debounce, throttle } from "lodash";
+import HexViewModal from "../../components/HexViewModal";
 
 const data = ["test.dat", "test2.dat"];
 
@@ -90,8 +91,15 @@ function App() {
         });
         setLoadingModalVisible(true);
     };
+
+    const [hexString, setHexString] = useState("");
+
     return (
         <Layout className="App">
+            <HexViewModal
+                hexString={hexString}
+                onClose={() => setHexString("")}
+            />
             <SettingsModal
                 initalValues={settings}
                 visible={settingsVisible}
@@ -140,7 +148,11 @@ function App() {
                     </Row>
                     <ButtonRow
                         transmit={onTransmit}
-                        showHex={() => hexAction("SHOW", files, settings)}
+                        showHex={async () =>
+                            setHexString(
+                                (await hexAction("SHOW", files, settings)) || ""
+                            )
+                        }
                         copyHex={() => hexAction("COPY", files, settings)}
                         openSettings={() => setSettingsVisible(true)}
                         actionsDisabled={files.length < 1}

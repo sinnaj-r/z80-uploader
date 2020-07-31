@@ -45,7 +45,7 @@ export const hexAction = async (
             message: "The Hex-String was copied successfully!",
         });
     } else if (action === "SHOW") {
-        alert(hexString);
+        return hexString;
     } else if (action === "TRANSMIT") {
         return transmitCommands(settings, hexString, onProgress);
     }
