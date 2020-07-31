@@ -53,6 +53,14 @@ Begin
   DoubleHexToInt := (Part1 shl 8) + Part2;
 End;
 
+Procedure ClearRemainingBuffer;
+Begin
+  While ((PosIndex Div 128) < 2) Do
+    Begin
+      Buffer[PosIndex] := 0;
+      PosIndex := PosIndex + 1;
+    End;
+End;
 
 Procedure ParseHex (Line: HexLine);
 
@@ -121,13 +129,15 @@ Begin
         Begin
           ParseHex(CurrentLine);
         End;
+      If (Not ContLoop) Then
+        ClearRemainingBuffer;
       If ((PosIndex Div 128 >= 1) Or Not ContLoop) Then
         Begin
           BlockWrite(DataFile, Buffer, 1);
-          PosIndex := 1;
+          PosIndex := PosIndex - 128;
         End;
     End;
   Close(DataFile);
 
 End.
-
+
