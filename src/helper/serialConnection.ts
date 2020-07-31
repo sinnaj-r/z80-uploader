@@ -2,13 +2,13 @@ import { SettingsType } from "./../initalSettings";
 import SerialPortType, { darwinBinding, finished } from "serialport";
 import { promisify } from "util";
 
-//const Bindings: darwinBinding = window.require("@serialport/bindings");
-const Bindings: darwinBinding = window.require("@serialport/binding-mock");
+const Bindings: darwinBinding = window.require("@serialport/bindings");
+//const Bindings: darwinBinding = window.require("@serialport/binding-mock");
 const SerialPort: typeof SerialPortType = window.require("@serialport/stream");
 SerialPort.Binding = Bindings;
 export { SerialPort };
 //@ts-ignore
-Bindings.createPort("/dev/ROBOT", { echo: true, record: true });
+//Bindings.createPort("/dev/ROBOT", { echo: false, record: true });
 console.log("bindings", Bindings);
 
 export const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -32,30 +32,21 @@ export const transmitCommands = async (
     hexString: string,
     onProgress = (x: ProgressType) => {}
 ) => {
+    //TODO Move to Settings
+    let maxRetries = 20;
     const port = new SerialPort(settings.serialPort, {
         baudRate: settings.baudRate,
         autoOpen: false,
+        lock: false,
     });
     console.log("port", port);
 
-    const write = promisify(
-        port.write.bind(port) as (
-            buffer: string | number[] | Buffer,
-            encoding?:
-                | "ascii"
-                | "utf8"
-                | "utf16le"
-                | "ucs2"
-                | "base64"
-                | "binary"
-                | "hex",
-            callback?: any
-        ) => boolean
-    );
     const open = promisify(port.open.bind(port));
-    const read = promisify(port.read.bind(port));
     const drain = promisify(port.drain.bind(port));
     const flush = promisify(port.flush.bind(port));
+
+    // @ts-ignore
+    window.pport = port;
 
     const lines = hexString.split("\n");
     let progress: ProgressType = initalProgress(lines.length);
@@ -63,18 +54,37 @@ export const transmitCommands = async (
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+        let errors = progress.errors;
         //
-        await write(line + "\n", "ascii");
-        await drain();
-        await sleep(20);
-        const result = false; //await read(1);
+        console.log("-----\n" + line);
         await flush();
+
+        for (let char of line) {
+            port.write(char, "ascii");
+            await drain();
+        }
+
+        port.write("\r\n", "ascii");
+        await drain();
+        await sleep(50);
+        const result = port.read()?.toString();
         console.log(result);
-        progress = { ...progress, finished: i + 1 };
+
+        if (line[0]) {
+            const resultWithoutInput =
+                result && result.replace(line + "\r\n", "");
+            if (!resultWithoutInput || !resultWithoutInput.includes(".")) {
+                i--;
+                maxRetries--;
+                errors += 1;
+            }
+        }
+        if (maxRetries <= 0) {
+            break;
+        }
+
+        progress = { ...progress, finished: i + 1, errors };
         onProgress(progress);
-        // if (result !== ".") {
-        //     i--;
-        // }
     }
     port.close();
     progress = { ...progress, completed: true };

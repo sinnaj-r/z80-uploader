@@ -16,3 +16,5 @@ export const initalSettings: SettingsType = {
     baudRate: 115200,
     serialPort: "",
 };
+
+//TODO Add Drive Setting

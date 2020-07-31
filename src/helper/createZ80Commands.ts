@@ -45,6 +45,6 @@ export const hexAction = async (
     } else if (action === "SHOW") {
         alert(hexString);
     } else if (action === "TRANSMIT") {
-        transmitCommands(settings, hexString, onProgress);
+        return transmitCommands(settings, hexString, onProgress);
     }
 };

@@ -42,6 +42,7 @@ const { Title } = Typography;
 
 function App() {
     const [files, setFiles] = useState<UploadFile[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [settings, setSettings] = useLocalStorage<SettingsType>(
         "settings",
         initalSettings
@@ -77,6 +78,18 @@ function App() {
     const onTransmitProgress = useRef(
         throttle((progress: ProgressType) => setProgress(progress), 50)
     );
+    const onTransmit = () => {
+        setErrorMessage(null);
+        hexAction(
+            "TRANSMIT",
+            files,
+            settings,
+            onTransmitProgress.current
+        ).catch((err) => {
+            setErrorMessage(err.message);
+        });
+        setLoadingModalVisible(true);
+    };
     return (
         <Layout className="App">
             <SettingsModal
@@ -93,6 +106,7 @@ function App() {
                 onClose={() => setLoadingModalVisible(false)}
                 progress={progressState}
                 visible={loadingModalVisible}
+                errorMessage={errorMessage}
             />
             <PageHeader
                 ghost={false}
@@ -125,15 +139,7 @@ function App() {
                         </Col>
                     </Row>
                     <ButtonRow
-                        transmit={() => {
-                            hexAction(
-                                "TRANSMIT",
-                                files,
-                                settings,
-                                onTransmitProgress.current
-                            );
-                            setLoadingModalVisible(true);
-                        }}
+                        transmit={onTransmit}
                         showHex={() => hexAction("SHOW", files, settings)}
                         copyHex={() => hexAction("COPY", files, settings)}
                         openSettings={() => setSettingsVisible(true)}
