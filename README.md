@@ -1,6 +1,7 @@
 # z80-uploader
-The easy way to transfer programs to your Z80
+![Logo](./public/logo192.png)
 
+The easy way to transfer programs to your Z80
 
 ## A few words about the structure of the project:
 
