@@ -14,10 +14,10 @@ The Downloader and Uploader can also be used separately, but when used together 
 
 ### ToDos
 
-[] Add more generall Documentation and Usage-Info
-[] Add specific instructions to install the Downloader
-[] Add a CI Pipeline or similar to directly provide executables
-[] Resolving "TODO"s in the Code
-[] Fixing Linter Issues
-[] Refactoring the Download-Client
-[] Add Screenshots/-cast to give a feeling for the App
+- [ ] Add more generall Documentation and Usage-Info
+- [ ] Add specific instructions to install the Downloader
+- [ ] Add a CI Pipeline or similar to directly provide executables
+- [ ] Resolving "TODO"s in the Code
+- [ ] Fixing Linter Issues
+- [ ] Refactoring the Download-Client
+- [ ] Add Screenshots/-cast to give a feeling for the App
