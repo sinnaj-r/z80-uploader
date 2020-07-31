@@ -11,6 +11,26 @@ For best results, the receiving device should have the ["Downloader"](Download-C
 
 The Downloader and Uploader can also be used separately, but when used together they have automatic error detection and correction, which makes it easy to send large amounts of data over unreliable connections.
 
+## How to get the downloader client on your Z80
+
+This project was created while following the instructions of Grant Searle, who built the Z80 with an FPGA. Our documentation can be found here.
+That Z80 had a special ROM which allows the transfer of Intel-Hex files.
+So you just had to convert the compiled download client with our uploader into the Intel-HEX format and then you could transfer it to the Z80.
+We would now like to explain this specific process in more detail: 
+
+## How to run or build the uplaoder app as a developer
+
+First of all you need a **current node version** (e.g. Node 12). We also recommend **yarn** as a packet manager.
+You can find many great guides how to install this software on the internet.
+To install our dependencies you now only need to run `yarn install`.
+
+Then you can create a **build** for the current platform with `yarn build`.
+
+A **development version** with Live-Reload can be started with `yarn start`.
+
+## How to run or compile the downloader client as a developer
+
+Just open the source file [Downloader.PAS](Download-Client/download.pas) with an TurboPascal installation and run or compile it with it.
 
 ### ToDos
 
