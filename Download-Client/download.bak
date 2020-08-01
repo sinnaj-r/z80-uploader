@@ -1,136 +1,143 @@
-program Download;
 
-const
-   RecSize = 128;
-   BufSize = 25600;
+Program Download;
 
-type
-   Str2 = string[2];
-   Str4 = string[4];
-   Str3 = string[3];
-   HexLine = string[45];
-   ByteBuffer = array[1 .. BufSize] of Byte;
+Const 
+  RecSize = 128;
+  BufSize = 25600;
 
-var
-   ContLoop: boolean;
-   DataFile: file;
-   CurrentLine: HexLine;
-   Buffer: ByteBuffer;
-   RecsWritten: Integer;
-   InitalOffset: Integer;
-   BytesWrittenTotal: Integer;
-   PosIndex: Integer;
+Type 
+  Str2 = string[2];
+  Str4 = string[4];
+  Str3 = string[3];
+  HexLine = string[45];
+  ByteBuffer = array[1 .. BufSize] Of Byte;
 
-function HexToInt (var St: Str2): Byte;
-    var
-       WorkingStr: Str3;
-       Code : Integer;
-       i : Integer;
-    begin
-         WorkingStr := Concat('$',St);
-         Val(WorkingStr,i,Code);
-         HexToInt:=i;
-         IF Code <> 0 then
-         begin
-              HexToInt:=0;
-         end;
-    end;
+Var 
+  ContLoop: boolean;
+  DataFile: file;
+  CurrentLine: HexLine;
+  Buffer: ByteBuffer;
+  RecsWritten: Integer;
+  InitalOffset: Integer;
+  BytesWrittenTotal: Integer;
+  PosIndex: Integer;
 
-function DoubleHexToInt (var St: Str4): Integer;
-    var
-       Part1St: Str2;
-       Part2St: Str2;
-       Part1: integer;
-       Part2: integer;
-    begin
-       Part1St := Copy(St, 1,2);
-       Part2St := Copy(St, 3,4);
-       Part1 := HexToInt(Part1St);
-       Part2 := HexToInt(Part2St);
-       DoubleHexToInt := (Part1 shl 8) + Part2;
-    end;
+Function HexToInt (Var St: Str2): Byte;
 
-procedure ClearRemainingBuffer;
-   begin
-      while ((PosIndex div 128) <= 1) do
-      begin
-           Buffer[PosIndex] := 0;
-           PosIndex := PosIndex + 1;
-      end;
-   end;
+Var 
+  WorkingStr: Str3;
+  Code : Integer;
+  i : Integer;
+Begin
+  WorkingStr := Concat('$',St);
+  Val(WorkingStr,i,Code);
+  HexToInt := i;
+  If Code <> 0 Then
+    Begin
+      HexToInt := 0;
+    End;
+End;
 
-procedure ParseHex (Line: HexLine);
-    var
-       ByteCountSt: Str2;
-       ByteCount: integer;
-       AddressSt: Str4;
-       Address: integer;
-       HexType: Str2;
-       DataEnd: integer;
-       ChecksumStr: str2;
-       Checksum: integer;
-       Pos: integer;
-       CurrentDataSt: Str2;
-       CurrentData: Byte;
-       CurrentSum: integer;
-    begin
-       ByteCountSt:= Copy(Line, 2,2);
-       ByteCount:= HexToInt(ByteCountSt);
-       AddressSt := Copy(Line, 4,4);
-       Address := DoubleHexToInt(AddressSt);
-       HexType := Copy(Line, 8,2);
-       DataEnd:= 10 + (ByteCount * 2) - 2;
-       ChecksumStr := Copy(Line, DataEnd + 2, 2);
-       Checksum := HexToInt(ChecksumStr);
+Function DoubleHexToInt (Var St: Str4): Integer;
 
-       CurrentSum := ByteCount;
-       CurrentSum := CurrentSum + (Address - ((Address shr 8) shl 8));
-       CurrentSum := CurrentSum + (Address shr 8);
-       CurrentSum := CurrentSum + HexToInt(HexType);
-       CurrentSum := CurrentSum + Checksum;
+Var 
+  Part1St: Str2;
+  Part2St: Str2;
+  Part1: integer;
+  Part2: integer;
+Begin
+  Part1St := Copy(St, 1,2);
+  Part2St := Copy(St, 3,4);
+  Part1 := HexToInt(Part1St);
+  Part2 := HexToInt(Part2St);
+  DoubleHexToInt := (Part1 shl 8) + Part2;
+End;
+
+Procedure ClearRemainingBuffer;
+Begin
+  While ((PosIndex Div 128) < 2) Do
+    Begin
+      Buffer[PosIndex] := 0;
+      PosIndex := PosIndex + 1;
+    End;
+End;
+
+Procedure ParseHex (Line: HexLine);
+
+Var 
+  ByteCountSt: Str2;
+  ByteCount: integer;
+  AddressSt: Str4;
+  Address: integer;
+  HexType: Str2;
+  DataEnd: integer;
+  ChecksumStr: str2;
+  Checksum: integer;
+  Pos: integer;
+  CurrentDataSt: Str2;
+  CurrentData: Byte;
+  CurrentSum: integer;
+Begin
+  ByteCountSt := Copy(Line, 2,2);
+  ByteCount := HexToInt(ByteCountSt);
+  AddressSt := Copy(Line, 4,4);
+  Address := DoubleHexToInt(AddressSt);
+  HexType := Copy(Line, 8,2);
+  DataEnd := 10 + (ByteCount * 2) - 2;
+  ChecksumStr := Copy(Line, DataEnd + 2, 2);
+  Checksum := HexToInt(ChecksumStr);
+
+  CurrentSum := ByteCount;
+  CurrentSum := CurrentSum + (Address - ((Address shr 8) shl 8));
+  CurrentSum := CurrentSum + (Address shr 8);
+  CurrentSum := CurrentSum + HexToInt(HexType);
+  CurrentSum := CurrentSum + Checksum;
 
 
-       if(HexType = '01') then ContLoop := False;
+  If (HexType = '01') Then ContLoop := False;
 
-       if(HexType = '00') then
-       begin
-           Pos := 10;
-           while Pos <= DataEnd do
-           begin
-             CurrentDataSt := Copy(Line, Pos, 2);
-             CurrentData := HexToInt(CurrentDataSt);
-             CurrentSum := CurrentSum + CurrentData;
-             Buffer[PosIndex] := CurrentData;
-             Pos := Pos + 2;
-             PosIndex := PosIndex + 1;
-           end;
-       end;
-       if ((CurrentSum and 255) = 0) then
-          write('.')
-       else
-          writeln('x');
+  If (HexType = '00') Then
+    Begin
+      Pos := 10;
+      While Pos <= DataEnd Do
+        Begin
+          CurrentDataSt := Copy(Line, Pos, 2);
+          CurrentData := HexToInt(CurrentDataSt);
+          CurrentSum := CurrentSum + CurrentData;
+          Buffer[PosIndex] := CurrentData;
+          Pos := Pos + 2;
+          PosIndex := PosIndex + 1;
+        End;
+    End;
+  If ((CurrentSum And 255) = 0) Then
+    write('.')
+  Else
+    writeln('x');
 
-    end;
+End;
 
-begin
+Begin
   Assign(DataFile, ParamStr(1));
   Rewrite(DataFile);
-  PosIndex:= 1;
+  PosIndex := 1;
   ContLoop := True;
-  while ContLoop do
-  begin
+  While ContLoop Do
+    Begin
       ReadLn(CurrentLine);
       ContLoop := CurrentLine <> '';
-      if(ContLoop) then
-      begin
-           ParseHex(CurrentLine);
-      end;
-      if((PosIndex div 128 >= 1) or not ContLoop) then
-      begin
+      If (ContLoop) Then
+        Begin
+          ParseHex(CurrentLine);
+        End;
+      If (Not ContLoop) Then
+        ClearRemainingBuffer;
+      If ((PosIndex Div 128 >= 1) Or Not ContLoop) Then
+        Begin
           BlockWrite(DataFile, Buffer, 1);
-          PosIndex:= PosIndex - 128;
-      end;
-  end;
+          PosIndex := PosIndex - 128;
+        End;
+    End;
   Close(DataFile);
 
-end.
+End.
+

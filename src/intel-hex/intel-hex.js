@@ -179,9 +179,9 @@ class MemoryMap {
                 );
 
                 recordHeader[0] = recordSize; // Length
-                recordHeader[1] = highAddress;
+                recordHeader[1] = highAddress >> 8;
+                recordHeader[2] = highAddress - ((highAddress >> 8) << 8);
                 recordHeader[3] = 0; // Record type
-
                 const subBlock = block.subarray(
                     blockOffset,
                     blockOffset + recordSize
