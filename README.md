@@ -13,7 +13,7 @@ The Downloader and Uploader can also be used separately, but when used together 
 
 ## How to get the downloader client on your Z80
 
-This project was created while following the instructions of Grant Searle, who built the Z80 with an FPGA. Our documentation can be found here.
+This project was created while following the instructions of Grant Searle, who built the Z80 with an FPGA. Our [documentation can be found here](https://github.com/sinnaj-r/z80-on-an-fpga).
 That Z80 had a special ROM which allows the transfer of Intel-Hex files.
 So you just had to convert the compiled download client with our uploader into the Intel-HEX format and then you could transfer it to the Z80.
 We would now like to explain this specific process in more detail: 
