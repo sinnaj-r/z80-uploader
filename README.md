@@ -17,20 +17,23 @@ This project was created while following the instructions of Grant Searle, who b
 That Z80 had a special ROM which allows the transfer of Intel-Hex files.
 So you just had to convert the compiled download client with our uploader into the Intel-HEX format and then you could transfer it to the Z80.
 We would now like to explain this specific process in more detail: 
+
 0. Open a serial connection to your fpga 
 1. (re)boot the FPGA
 2. You should see the `Press [SPACE] to activate console`-Prompt
 3. Press `SPACE`
 4. Open the Uploader-App
-5. In the settings disable the `Copy commands`-Switch and `Save` the settings
-6. Drop the [Downloader.COM](Download-Client/download.com) file in the Dropzone
-7. Click `Copy HEX`
-8. Now paste the selected HEX-String in the Terminal (Dots (`...`) should appear)
-9. After some time the terminal will say `complete`
-10. You want to enter `GFFE8` and press enter
-11. CP/M will be started; Navigate to the drive where the download program should be located 
-12. Type `SAVE 2 DOWNLOAD.COM` and press enter. 
-**The Download.com program is now ready to be used**
+5. Open the Settings
+6. Disable the `Copy commands`-Switch 
+7. Set the Offset to `(0x)4200` and `Save` the settings
+8. Drop the [Downloader.COM](Download-Client/download.com) file in the Dropzone
+9. Click `Copy HEX`
+10. Now paste the selected HEX-String in the Terminal (Dots (`...`) should appear)
+11. After some time the terminal will say `complete`
+12. You want to enter `GFFE8` and press enter
+13. CP/M will be started; Navigate to the drive where the download program should be located 
+14. Type `SAVE 2 DOWNLOAD.COM` and press enter. 
+15. The Download.com program is now **ready to be used**.
 
 ## How to run or build the uploader app as a developer
 
