@@ -17,8 +17,22 @@ This project was created while following the instructions of Grant Searle, who b
 That Z80 had a special ROM which allows the transfer of Intel-Hex files.
 So you just had to convert the compiled download client with our uploader into the Intel-HEX format and then you could transfer it to the Z80.
 We would now like to explain this specific process in more detail: 
+0. Open a serial connection to your fpga 
+1. (re)boot the FPGA
+2. You should see the `Press [SPACE] to activate console`-Prompt
+3. Press `SPACE`
+4. Open the Uploader-App
+5. In the settings disable the `Copy commands`-Switch and `Save` the settings
+6. Drop the [Downloader.COM](Download-Client/download.com) file in the Dropzone
+7. Click `Copy HEX`
+8. Now paste the selected HEX-String in the Terminal (Dots (`...`) should appear)
+9. After some time the terminal will say `complete`
+10. You want to enter `GFFE8` and press enter
+11. CP/M will be started; Navigate to the drive where the download program should be located 
+12. Type `SAVE 2 DOWNLOAD.COM` and press enter. 
+**The Download.com program is now ready to be used**
 
-## How to run or build the uplaoder app as a developer
+## How to run or build the uploader app as a developer
 
 First of all you need a **current node version** (e.g. Node 12). We also recommend **yarn** as a packet manager.
 You can find many great guides how to install this software on the internet.
@@ -41,3 +55,4 @@ Just open the source file [Downloader.PAS](Download-Client/download.pas) with an
 - [ ] Fixing Linter Issues
 - [ ] Refactoring the Download-Client
 - [ ] Add Screenshots/-cast to give a feeling for the App
+- [ ] The inital Downloader-Transfer should be possible with the Uploader as well. There are just some timeouts that need minor changes.
