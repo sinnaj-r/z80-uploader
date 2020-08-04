@@ -25,7 +25,7 @@ We would now like to explain this specific process in more detail:
 4. Open the Uploader-App
 5. Open the Settings
 6. Disable the `Copy commands`-Switch 
-7. Set the Offset to `(0x)4200` and `Save` the settings
+7. Set the Offset to `(0x)4100` and `Save` the settings
 8. Drop the [Downloader.COM](Download-Client/download.com) file in the Dropzone
 9. Click `Copy HEX`
 10. Now paste the selected HEX-String in the Terminal (Dots (`...`) should appear)
