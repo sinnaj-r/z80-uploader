@@ -32,11 +32,11 @@ export const transmitCommands = async (
     onProgress = (x: ProgressType) => {}
 ) => {
     //TODO Move to Settings
-    let maxRetries = 20;
+    let maxRetries = 35;
     const port = new SerialPort(settings.serialPort, {
         baudRate: settings.baudRate,
         autoOpen: false,
-        lock: false,
+        lock: true,
     });
 
     const open = promisify(port.open.bind(port));
