@@ -9,6 +9,12 @@
         "directories": {
             "buildResources": "build",
             "output": "dist"
+        },
+        "mac": {
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "assets/entitlements.mac.plist",
+            "entitlementsInherit": "assets/entitlements.mac.plist"
         }
     },
     "homepage": ".",
