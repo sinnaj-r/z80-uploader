@@ -44,8 +44,10 @@
         "react-test": "react-scripts test --env=jsdom",
         "react-eject": "react-scripts eject",
         "electron-build": "electron-builder",
-        "release": "yarn react-build && electron-builder --publish=always",
-        "build": "yarn react-build && yarn electron-build",
+        "release": "yarn react-build && electron-builder -m dmg -l -w portable --publish=onTag",
+        "build": "yarn react-build",
+        "build-full": "yarn react-build && yarn electron-build",
+        "build-all": "yarn react-build && electron-builder -m dmg -l -w portable",
         "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
     },
     "eslintConfig": {
