@@ -53,7 +53,7 @@ export const FileList = ({
                 >
                     <Space>
                         <FileOutlined />
-                        {editEnabled == item.uid ? (
+                        {editEnabled === item.uid ? (
                             <Input
                                 onChange={({ target: { value } }) =>
                                     setNewFileName(value)

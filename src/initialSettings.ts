@@ -7,7 +7,7 @@ export type SettingsType = {
     baudRate: number;
     serialPort: string;
 };
-export const initalSettings: SettingsType = {
+export const initialSettings: SettingsType = {
     byteOffset: "5000",
     copyCommands: true,
     showCommands: true,

@@ -1,5 +1,5 @@
 import { transmitCommands, ProgressType } from "./serialConnection";
-import { SettingsType } from "./../initalSettings";
+import { SettingsType } from "../initialSettings";
 import { UploadFile } from "antd/lib/upload/interface";
 import { fileArrayToHex } from "./fileTransformation";
 import { notification } from "antd";

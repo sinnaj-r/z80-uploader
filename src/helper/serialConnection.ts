@@ -1,5 +1,5 @@
-import { SettingsType } from "./../initalSettings";
-import SerialPortType, { darwinBinding, finished } from "serialport";
+import { SettingsType } from "../initialSettings";
+import SerialPortType, { darwinBinding } from "serialport";
 import { promisify } from "util";
 
 const Bindings: darwinBinding = window.require("@serialport/bindings");
@@ -19,7 +19,7 @@ export type ProgressType = {
     completed: boolean;
 };
 
-export const initalProgress = (total: number) => ({
+export const initialProgress = (total: number) => ({
     finished: 0,
     total,
     errors: 0,
@@ -43,11 +43,8 @@ export const transmitCommands = async (
     const drain = promisify(port.drain.bind(port));
     const flush = promisify(port.flush.bind(port));
 
-    // @ts-ignore
-    window.pport = port;
-
     const lines = hexString.split("\n");
-    let progress: ProgressType = initalProgress(lines.length);
+    let progress: ProgressType = initialProgress(lines.length);
     await open();
     port.write("\r\n", "ascii");
 

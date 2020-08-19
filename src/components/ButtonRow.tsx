@@ -2,10 +2,8 @@ import React, { FC } from "react";
 import { Row, Col, Button, Space, Popconfirm } from "antd";
 import {
     SettingOutlined,
-    PlayCircleOutlined,
     CaretRightOutlined,
     CopyOutlined,
-    FileOutlined,
     FileTextOutlined,
 } from "@ant-design/icons";
 export const ButtonRow: FC<{

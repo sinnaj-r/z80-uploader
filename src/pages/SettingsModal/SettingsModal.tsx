@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-import { Modal, Form, Input, Radio, Switch, Select, InputNumber } from "antd";
+import { Modal, Form, Input, Switch, Select, InputNumber } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { SettingsType } from "../../initalSettings";
+import { SettingsType } from "../../initialSettings";
 import { SerialPort } from "../../helper/serialConnection";
 
 export const SettingsModal: React.FC<{
     visible: boolean;
     onCreate: (settings: object) => void;
     onCancel: () => void;
-    initalValues: SettingsType;
-}> = ({ visible, onCreate, onCancel, initalValues }) => {
+    initialValues: SettingsType;
+}> = ({ visible, onCreate, onCancel, initialValues }) => {
     const [form] = Form.useForm();
     const [ports, setPorts] = useState<any[]>([]);
     useEffect(() => {
@@ -33,7 +33,7 @@ export const SettingsModal: React.FC<{
                 });
             }}
         >
-            <Form form={form} layout="vertical" initialValues={initalValues}>
+            <Form form={form} layout="vertical" initialValues={initialValues}>
                 <Form.Item name="serialPort" label="Serial Port" rules={[]}>
                     <Select>
                         {ports.map((port) => (

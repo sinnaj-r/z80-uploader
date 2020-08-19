@@ -4,11 +4,6 @@ import React, { useState, useRef } from "react";
 import {
     Row,
     Col,
-    List,
-    Button,
-    Upload,
-    message,
-    Space,
     Divider,
     Layout,
     Typography,
@@ -16,29 +11,20 @@ import {
     notification,
 } from "antd";
 import "./App.css";
-import {
-    InboxOutlined,
-    PlusOutlined,
-    SettingOutlined,
-} from "@ant-design/icons";
 import { UploadChangeParam } from "antd/lib/upload";
 import { UploadFile } from "antd/lib/upload/interface";
 import { FileList } from "../../components/FileList";
-import { fileArrayToHex } from "../../helper/fileTransformation";
 import { SettingsModal } from "../SettingsModal/SettingsModal";
 import { useLocalStorage } from "../../helper/useLocalStorage";
-import { initalSettings, SettingsType } from "../../initalSettings";
+import { initialSettings, SettingsType } from "../../initialSettings";
 import produce from "immer";
 import { hexAction } from "../../helper/createZ80Commands";
-import { ProgressType, initalProgress } from "../../helper/serialConnection";
+import { ProgressType, initialProgress } from "../../helper/serialConnection";
 import { LoadingModal } from "../../components/LoadingModal";
-import { debounce, throttle } from "lodash";
+import { throttle } from "lodash";
 import HexViewModal from "../../components/HexViewModal";
 
-const data = ["test.dat", "test2.dat"];
-
-const { Dragger } = Upload;
-const { Content, Footer, Header } = Layout;
+const { Content, Footer } = Layout;
 const { Title } = Typography;
 
 function App() {
@@ -46,11 +32,11 @@ function App() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [settings, setSettings] = useLocalStorage<SettingsType>(
         "settings",
-        initalSettings
+        initialSettings
     );
     const [settingsVisible, setSettingsVisible] = useState(false);
     const [progressState, setProgress] = useState<ProgressType>(
-        initalProgress(0)
+        initialProgress(0)
     );
     const [loadingModalVisible, setLoadingModalVisible] = useState(false);
 
@@ -80,7 +66,7 @@ function App() {
     );
     const onTransmit = () => {
         setErrorMessage(null);
-        setProgress(initalProgress(0));
+        setProgress(initialProgress(0));
         hexAction(
             "TRANSMIT",
             files,
@@ -101,7 +87,7 @@ function App() {
                 onClose={() => setHexString("")}
             />
             <SettingsModal
-                initalValues={settings}
+                initialValues={settings}
                 visible={settingsVisible}
                 onCancel={() => setSettingsVisible(false)}
                 onCreate={(settings: any) => {
