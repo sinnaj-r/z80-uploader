@@ -1,6 +1,6 @@
 {
     "name": "z80uploader",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "private": true,
     "author": "@sinnaj-r",
     "build": {
@@ -14,7 +14,40 @@
             "hardenedRuntime": true,
             "gatekeeperAssess": false,
             "entitlements": "assets/entitlements.mac.plist",
-            "entitlementsInherit": "assets/entitlements.mac.plist"
+            "entitlementsInherit": "assets/entitlements.mac.plist",
+            "target": [
+                {
+                    "target": "dmg"
+                }
+            ]
+        },
+        "linux": {
+            "target": [
+                {
+                    "target": "AppImage"
+                },
+                {
+                    "target": "tar.gz"
+                }
+            ]
+        },
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64",
+                        "ia32"
+                    ]
+                },
+                {
+                    "target": "portable",
+                    "arch": [
+                        "x64",
+                        "ia32"
+                    ]
+                }
+            ]
         }
     },
     "homepage": ".",
