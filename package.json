@@ -107,7 +107,7 @@
     "devDependencies": {
         "@serialport/binding-mock": "^9.0.0",
         "concurrently": "^5.2.0",
-        "electron": "^9.1.2",
+        "electron": "^18.3.7",
         "electron-builder": "^22.8.0",
         "wait-on": "^5.1.0"
     }
